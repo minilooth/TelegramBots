@@ -13,11 +13,13 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.experimental.Tolerate;
 import lombok.extern.jackson.Jacksonized;
-import org.telegram.telegrambots.meta.api.methods.botapimethods.BotApiMethodMessage;
+import org.telegram.telegrambots.meta.api.methods.botapimethods.PartialBotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.ReplyParameters;
+import org.telegram.telegrambots.meta.api.objects.message.Message;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.richtext.InputRichMessage;
 import org.telegram.telegrambots.meta.api.objects.suggestedpost.SuggestedPostParameters;
+import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiValidationException;
 import org.telegram.telegrambots.meta.util.Validations;
 
@@ -37,7 +39,7 @@ import org.telegram.telegrambots.meta.util.Validations;
 @Jacksonized
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SendRichMessage extends BotApiMethodMessage {
+public class SendRichMessage extends PartialBotApiMethod<Message> {
     public static final String PATH = "sendRichMessage";
 
     public static final String BUSINESS_CONNECTION_ID_FIELD = "business_connection_id";
@@ -133,6 +135,11 @@ public class SendRichMessage extends BotApiMethodMessage {
     }
 
     @Override
+    public Message deserializeResponse(String answer) throws TelegramApiRequestException {
+        return deserializeResponse(answer, Message.class);
+    }
+
+    @Override
     public String getMethod() {
         return PATH;
     }
@@ -152,7 +159,7 @@ public class SendRichMessage extends BotApiMethodMessage {
         }
     }
 
-    public static abstract class SendRichMessageBuilder<C extends SendRichMessage, B extends SendRichMessageBuilder<C, B>> extends BotApiMethodMessageBuilder<C, B> {
+    public static abstract class SendRichMessageBuilder<C extends SendRichMessage, B extends SendRichMessageBuilder<C, B>> extends PartialBotApiMethodBuilder<Message, C, B> {
         @Tolerate
         public SendRichMessageBuilder<C, B> chatId(@NonNull Long chatId) {
             this.chatId = chatId.toString();
